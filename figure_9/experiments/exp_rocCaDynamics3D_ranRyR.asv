@@ -1,0 +1,39 @@
+function out=exp_rocCaDynamics3D_ranRyR(network_name, var_str, interval,var_location,useRyr)
+
+home=pwd;
+cd results
+if not(isfolder(network_name))
+    mkdir(network_name)
+end
+cd(network_name)
+
+input_file_proc='parameters_proc';
+rateFunctionsSCS
+
+if useRyr
+    IrR=
+else
+    IrR=0;
+end
+
+if strcmp(var_str,'')
+    input_file_body_var=[input_file_body,'.mat'];
+    setParametersProc3D(input_file_proc,'useRyr',useRyr)
+    ProcCaDynamics3D_ranRyR(input_file_body_var, false,'useRyr');
+else
+    for var_value=interval
+        input_file_body_var=[input_file_body,'_', var_str, num2str(var_value),'.mat'];
+        if useRyr
+            setParametersProc3D(input_file_proc, var_str, var_value);
+        else
+            setParametersProc3D(input_file_proc, var_str, var_value,'useRyr',IrR)
+
+        ProcCaDynamics3D_ranRyR(input_file_body_var);
+    end
+end
+cd(home)
+
+%Order to run original scripts
+% rateFunctionsSCS
+% setParametersProc
+% ProcCaDynamics
